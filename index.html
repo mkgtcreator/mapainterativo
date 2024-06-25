@@ -33,7 +33,7 @@
         // Função para enviar a localização ao CRM da HubSpot
         function enviarLocalizacaoParaHubSpot(location) {
             var hubspotToken = 'pat-na1-f1d2ed0f-2135-4ab4-8efa-d0ec5c153365'; // Substitua pelo seu token de acesso da HubSpot
-            var hubspotEndpoint = 'https://api.hubapi.com/contacts/v1/contact/createOrUpdate/email/example@example.com'; // Ajuste o endpoint conforme necessário
+            var hubspotEndpoint = 'https://api.hubapi.com/crm/v3/objects/contacts';
 
             var data = {
                 properties: [
@@ -44,8 +44,6 @@
                 ]
             };
 
-            console.log('Enviando localização para HubSpot:', data);
-
             fetch(hubspotEndpoint, {
                 method: 'POST',
                 headers: {
@@ -54,7 +52,12 @@
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao enviar localização: ' + response.statusText);
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log('Success:', data);
                 alert('Sua localização foi registrada com sucesso!');
@@ -82,4 +85,3 @@
     </script>
 </body>
 </html>
-
