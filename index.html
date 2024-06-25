@@ -15,9 +15,6 @@
         #map {
             height: 600px;
             width: 100%;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_politics.svg/1280px-World_map_-_politics.svg.png');
-            background-size: cover;
-            background-position: center;
         }
     </style>
 </head>
@@ -26,7 +23,17 @@
 
     <script>
         // Inicializa o mapa centrado no Brasil
-        var map = L.map('map').setView([-14.235004, -51.92528], 4);
+        var map = L.map('map').setView([-14.235004, -51.92528], 5);
+
+        // Define limites para restringir o mapa ao Brasil
+        var southWest = L.latLng(-33.8, -74.2),
+            northEast = L.latLng(5.2, -34.5),
+            bounds = L.latLngBounds(southWest, northEast);
+        
+        map.setMaxBounds(bounds);
+        map.on('drag', function() {
+            map.panInsideBounds(bounds, { animate: false });
+        });
 
         // Adiciona camadas de tiles ao mapa
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -35,8 +42,8 @@
 
         // Função para enviar a localização ao CRM da HubSpot
         function enviarLocalizacaoParaHubSpot(location) {
-            var hubspotToken = 'pat-na1-f1d2ed0f-2135-4ab4-8efa-d0ec5c153365'; // Substitua pelo seu token de acesso da HubSpot
-            var hubspotEndpoint = 'https://api.hubapi.com/crm/v3/objects/contacts';
+            var hubspotToken = 'pat-na1-f1d2ed0f-2135-4ab4-8efa-d0ec5c153365'; // Substitua pela sua chave de API do HubSpot
+            var hubspotEndpoint = 'https://cors-anywhere.herokuapp.com/https://api.hubapi.com/contacts/v1/contact';
 
             var data = {
                 properties: [
@@ -71,20 +78,84 @@
             });
         }
 
-        // Função para capturar o clique do usuário no mapa
-        map.on('click', function(e) {
+        // Adicionar funcionalidade de realce ao passar o mouse sobre o Brasil
+        var brasilLayer = L.geoJson(brasilData, {
+            style: function(feature) {
+                return {
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    fillOpacity: 0.7,
+                    fillColor: '#4CAF50'
+                };
+            },
+            onEachFeature: function(feature, layer) {
+                layer.on({
+                    mouseover: highlightFeature,
+                    mouseout: resetHighlight,
+                    click: enviarLocalizacao
+                });
+            }
+        }).addTo(map);
+
+        // Função para realçar a região ao passar o mouse
+        function highlightFeature(e) {
+            var layer = e.target;
+
+            layer.setStyle({
+                weight: 3,
+                color: '#3388ff',
+                dashArray: '',
+                fillOpacity: 0.7
+            });
+
+            if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                layer.bringToFront();
+            }
+        }
+
+        // Função para resetar o realce ao retirar o mouse
+        function resetHighlight(e) {
+            brasilLayer.resetStyle(e.target);
+        }
+
+        // Função para enviar a localização ao clicar na região
+        function enviarLocalizacao(e) {
             var region = e.latlng; // Captura a latitude e longitude da região clicada
-            
+
             // Transforma a coordenada em uma string
             var regionName = `Latitude: ${region.lat}, Longitude: ${region.lng}`;
-            console.log('Região clicada:', regionName);
-            
+
             // Envia a localização para o HubSpot
             enviarLocalizacaoParaHubSpot(region);
-        });
+        }
 
-        // Adiciona um marcador no Brasil
-        var marker = L.marker([-14.235004, -51.92528]).addTo(map).bindPopup("<b>Bem vindo ao Brasil!</b><br>Seu país.");
+        // GeoJSON com dados do Brasil para realçar regiões
+        var brasilData = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "properties": {},
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [-73.65234375, 5.61598581915534],
+                                [-34.716796875, 5.61598581915534],
+                                [-34.716796875, -33.65120829920497],
+                                [-73.65234375, -33.65120829920497],
+                                [-73.65234375, 5.61598581915534]
+                            ]
+                        ]
+                    }
+                }
+            ]
+        };
+
+        // Adiciona o GeoJSON do Brasil ao mapa
+        L.geoJson(brasilData).addTo(map);
+
     </script>
 </body>
 </html>
