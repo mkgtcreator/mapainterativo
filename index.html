@@ -23,7 +23,7 @@
 
     <script>
         // Inicializa o mapa centrado no Brasil
-        var map = L.map('map').setView([-14.235004, -51.92528], 4);
+        var map = L.map('map').setView([-14.235004, -51.92528], 3);
 
         // Adiciona camadas de tiles ao mapa
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -44,7 +44,7 @@
                 ]
             };
 
-            fetch(hubspotEndpoint, {
+            fetch('https://piproxy.herokuapp.com/' + hubspotEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
