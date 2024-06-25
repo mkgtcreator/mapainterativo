@@ -23,67 +23,74 @@
 
     <script>
         // Inicializa o mapa centrado no Brasil
-        var map = L.map('map').setView([-14.235004, -51.92528], 4);
+        var map = L.map('map').setView([-14.235004, -51.92528], 3);
 
         // Adiciona camadas de tiles ao mapa
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Ajusta o zoom e limita ao Brasil
-        var southWest = L.latLng(-33.742612, -73.989647); // Limita ao sul e oeste do mapa
-        var northEast = L.latLng(5.271412, -33.742612); // Limita ao norte e leste do mapa
-        var bounds = L.latLngBounds(southWest, northEast);
-        map.setMaxBounds(bounds);
-        map.on('drag', function() {
-            map.panInsideBounds(bounds, { animate: false });
-        });
+        // Função para enviar a localização ao CRM da HubSpot
+        function enviarLocalizacaoParaHubSpot(location) {
+            var hubspotApiKey = 'pat-na1-f1d2ed0f-2135-4ab4-8efa-d0ec5c153365'; // Substitua pela sua chave de API do HubSpot
+            var hubspotEndpoint = 'https://api.hubapi.com/contacts/v1/contact';
 
+            var data = {
+                properties: [
+                    {
+                        property: 'location',
+                        value: location.toString()
+                    }
+                ]
+            };
+
+            fetch(hubspotEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + hubspotApiKey
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Sua localização foi registrada com sucesso!');
+            })
+            .catch((error) => {
+                console.error('Erro ao enviar localização:', error);
+                alert('Houve um erro ao enviar a localização.');
+            });
+        }
+
+        // Função para capturar o clique do usuário no mapa
+        map.on('click', function(e) {
+            var region = e.latlng; // Captura a latitude e longitude da região clicada
+            
+            // Transforma a coordenada em uma string
+            var regionName = `Latitude: ${region.lat}, Longitude: ${region.lng}`;
+            
+            // Envia a localização para o HubSpot
+            enviarLocalizacaoParaHubSpot(region);
+        });
+        
         // Adiciona um marcador no Brasil
         var marker = L.marker([-14.235004, -51.92528]).addTo(map).bindPopup("<b>Bem vindo ao Brasil!</b><br>Seu país.");
 
-        // Função para destacar regiões ao passar o mouse
-        function highlightFeature(e) {
-            var layer = e.target;
+        // Desenha um círculo
+        var circle = L.circle([51.508, -0.11], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 500
+        }).addTo(map).bindPopup("I am a circle.");
 
-            layer.setStyle({
-                weight: 2,
-                color: '#666',
-                dashArray: '',
-                fillOpacity: 0.7
-            });
-
-            if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-                layer.bringToFront();
-            }
-        }
-
-        // Função para resetar estilo ao remover o mouse
-        function resetHighlight(e) {
-            var layer = e.target;
-            layer.setStyle({
-                weight: 0.5,
-                color: 'white',
-                dashArray: '',
-                fillOpacity: 0.7
-            });
-        }
-
-        // Função para definir eventos de mouse nas camadas
-        function onEachFeature(feature, layer) {
-            layer.on({
-                mouseover: highlightFeature,
-                mouseout: resetHighlight
-            });
-        }
-
-        // Desenha um polígono representando o Brasil
+        // Desenha um polígono
         var polygon = L.polygon([
-            [-33.742612, -73.989647],
-            [-33.742612, -33.742612],
-            [5.271412, -33.742612],
-            [5.271412, -73.989647]
-        ]).addTo(map).on('mouseover', highlightFeature).on('mouseout', resetHighlight).bindPopup("Brasil");
+            [51.509, -0.08],
+            [51.503, -0.06],
+            [51.51, -0.047]
+        ]).addTo(map).bindPopup("I am a polygon.");
 
         // Evento click para mostrar popup com coordenadas
         var popup = L.popup();
