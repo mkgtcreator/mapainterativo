@@ -15,6 +15,9 @@
         #map {
             height: 600px;
             width: 100%;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_politics.svg/1280px-World_map_-_politics.svg.png');
+            background-size: cover;
+            background-position: center;
         }
     </style>
 </head>
@@ -23,7 +26,7 @@
 
     <script>
         // Inicializa o mapa centrado no Brasil
-        var map = L.map('map').setView([-14.235004, -51.92528], 3);
+        var map = L.map('map').setView([-14.235004, -51.92528], 4);
 
         // Adiciona camadas de tiles ao mapa
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
