@@ -12,7 +12,7 @@
     crossorigin=""></script>
     <title>Leaflet Mapa Interativo</title>
     <style>
-        #map {
+        #mapid {
             height: 600px;
             width: 100%;
         }
@@ -20,12 +20,12 @@
 </head>
 <body>
     <h1>Sua localização é:</h1>
-    <h2 id="location"></h2>
-    <div id="map"></div>
+    <h2></h2>
+    <div id="mapid"></div>
 
     <script>
         // Inicializa o mapa centrado no Brasil
-        var map = L.map('map').setView([-14.235004, -51.92528], 5);
+        var map = L.map('mapid').setView([-14.235004, -51.92528], 5);
 
         // Define limites para restringir o mapa ao Brasil
         var southWest = L.latLng(-33.8, -74.2),
@@ -87,12 +87,29 @@
             // Transforma a coordenada em uma string
             var regionName = `Latitude: ${region.lat}, Longitude: ${region.lng}`;
             
-            // Exibe a localização clicada na página
-            document.getElementById('location').innerText = regionName;
-            
             // Envia a localização para o HubSpot
             enviarLocalizacaoParaHubSpot(region);
         });
+
+        // Adicionar funcionalidade de realce ao passar o mouse sobre o Brasil
+        var brasilLayer = L.geoJson(brasilData, {
+            style: function(feature) {
+                return {
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    fillOpacity: 0.7,
+                    fillColor: '#4CAF50'
+                };
+            },
+            onEachFeature: function(feature, layer) {
+                layer.on({
+                    mouseover: highlightFeature,
+                    mouseout: resetHighlight,
+                    click: enviarLocalizacao
+                });
+            }
+        }).addTo(map);
 
         // Função para realçar a região ao passar o mouse
         function highlightFeature(e) {
@@ -122,9 +139,6 @@
             // Transforma a coordenada em uma string
             var regionName = `Latitude: ${region.lat}, Longitude: ${region.lng}`;
 
-            // Exibe a localização clicada na página
-            document.getElementById('location').innerText = regionName;
-            
             // Envia a localização para o HubSpot
             enviarLocalizacaoParaHubSpot(region);
         }
@@ -153,25 +167,7 @@
         };
 
         // Adiciona o GeoJSON do Brasil ao mapa
-        var brasilLayer = L.geoJson(brasilData, {
-            style: function(feature) {
-                return {
-                    weight: 2,
-                    opacity: 1,
-                    color: 'white',
-                    fillOpacity: 0.7,
-                    fillColor: '#4CAF50'
-                };
-            },
-            onEachFeature: function(feature, layer) {
-                layer.on({
-                    mouseover: highlightFeature,
-                    mouseout: resetHighlight,
-                    click: enviarLocalizacao
-                });
-            }
-        }).addTo(map);
-
+        L.geoJson(brasilData).addTo(map);
     </script>
 </body>
 </html>
