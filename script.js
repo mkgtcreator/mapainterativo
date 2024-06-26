@@ -1,3 +1,32 @@
+// Exemplo simplificado de brasilData (GeoJSON com fronteiras do Brasil)
+var brasilData = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [-73.987602, -33.768377],
+                        [-34.729993, -7.276869],
+                        [-53.612083, 5.702097],
+                        [-73.987602, -33.768377]
+                    ]
+                    // Adicione mais coordenadas conforme necessário para definir o polígono
+                ]
+            },
+            "properties": {
+                "name": "Brasil"
+            }
+        }
+    ]
+};
+
+// Log para verificar se brasilData está definido corretamente
+console.log(brasilData);
+
+// Restante do seu código JavaScript
 let h2 = document.querySelector('h2');
 var map;
 
@@ -14,10 +43,6 @@ function success(pos) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
-
-    L.marker([pos.coords.latitude, pos.coords.longitude]).addTo(map)
-        .bindPopup('Eu estou aqui.<br> Facilmente customizável.')
-        .openPopup();
 
     // Verificar se brasilData está definido
     if (typeof brasilData !== 'undefined') {
