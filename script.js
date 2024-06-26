@@ -1,10 +1,9 @@
 let h2 = document.querySelector('h2');
 var map;
-console.log(map);
 
 function success(pos){
     console.log(pos.coords.latitude, pos.coords.longitude);
-    h2.textContent = `Latitude:${pos.coords.latitude}, Longitude:${pos.coords.longitude}`;
+    h2.textContent = `Latitude: ${pos.coords.latitude}, Longitude: ${pos.coords.longitude}`;
     
     if (map === undefined) {
         map = L.map('mapid').setView([pos.coords.latitude, pos.coords.longitude], 13);
@@ -65,14 +64,14 @@ function success(pos){
     // Função para enviar a localização ao CRM da HubSpot
     function enviarLocalizacao(e) {
         var region = e.latlng; // Captura a latitude e longitude da região clicada
-
+    
         // Transforma a coordenada em uma string
         var regionName = `Latitude: ${region.lat}, Longitude: ${region.lng}`;
-
-        // Envie a localização para o CRM da HubSpot
-        var hubspotEndpoint = 'https://api.hubapi.com/crm/v3/objects/deals/sensitive/read';
+    
+        // Envie a localização para o CRM da HubSpot usando um proxy
+        var hubspotEndpoint = 'https://cors-anywhere.herokuapp.com/https://api.hubapi.com/crm/v3/objects/deals/sensitive/read';
         var hubspotToken = 'pat-na1-f1d2ed0f-2135-4ab4-8efa-d0ec5c153365'; // Substitua pelo seu token
-
+    
         var data = {
             properties: [
                 {
@@ -81,7 +80,7 @@ function success(pos){
                 }
             ]
         };
-
+    
         fetch(hubspotEndpoint, {
             method: 'POST',
             headers: {
@@ -105,6 +104,7 @@ function success(pos){
             alert('Houve um erro ao enviar a localização.');
         });
     }
+
 }
 
 function error(err){
