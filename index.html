@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
     crossorigin=""/>
     <!-- Make sure you put this AFTER Leaflet's CSS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
     crossorigin=""></script>
     <title>Leaflet Mapa Interativo</title>
     <style>
@@ -79,17 +80,6 @@
                 alert('Houve um erro ao enviar a localização.');
             });
         }
-
-        // Função para capturar o clique do usuário no mapa
-        map.on('click', function(e) {
-            var region = e.latlng; // Captura a latitude e longitude da região clicada
-            
-            // Transforma a coordenada em uma string
-            var regionName = `Latitude: ${region.lat}, Longitude: ${region.lng}`;
-            
-            // Envia a localização para o HubSpot
-            enviarLocalizacaoParaHubSpot(region);
-        });
 
         // Adicionar funcionalidade de realce ao passar o mouse sobre o Brasil
         var brasilLayer = L.geoJson(brasilData, {
@@ -168,6 +158,7 @@
 
         // Adiciona o GeoJSON do Brasil ao mapa
         L.geoJson(brasilData).addTo(map);
+
     </script>
 </body>
 </html>
