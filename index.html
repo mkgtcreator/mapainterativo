@@ -81,26 +81,6 @@
             });
         }
 
-        // Adicionar funcionalidade de realce ao passar o mouse sobre o Brasil
-        var brasilLayer = L.geoJson(brasilData, {
-            style: function(feature) {
-                return {
-                    weight: 2,
-                    opacity: 1,
-                    color: 'white',
-                    fillOpacity: 0.7,
-                    fillColor: '#4CAF50'
-                };
-            },
-            onEachFeature: function(feature, layer) {
-                layer.on({
-                    mouseover: highlightFeature,
-                    mouseout: resetHighlight,
-                    click: enviarLocalizacao
-                });
-            }
-        }).addTo(map);
-
         // Função para realçar a região ao passar o mouse
         function highlightFeature(e) {
             var layer = e.target;
@@ -157,7 +137,24 @@
         };
 
         // Adiciona o GeoJSON do Brasil ao mapa
-        L.geoJson(brasilData).addTo(map);
+        var brasilLayer = L.geoJson(brasilData, {
+            style: function(feature) {
+                return {
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    fillOpacity: 0.7,
+                    fillColor: '#4CAF50'
+                };
+            },
+            onEachFeature: function(feature, layer) {
+                layer.on({
+                    mouseover: highlightFeature,
+                    mouseout: resetHighlight,
+                    click: enviarLocalizacao
+                });
+            }
+        }).addTo(map);
 
     </script>
 </body>
